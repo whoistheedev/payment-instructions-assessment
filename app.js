@@ -9,24 +9,35 @@ const { createQueue } = require('@app-core/queue');
 
 const canLogEndpointInformation = process.env.CAN_LOG_ENDPOINT_INFORMATION;
 
+// ─────────────────────────────────────────────
+// DATABASE + QUEUES
+// ─────────────────────────────────────────────
 createConnection({
   uri: process.env.MONGODB_URI,
 });
 
 createQueue();
 
+// ─────────────────────────────────────────────
+// SERVER SETUP
+// ─────────────────────────────────────────────
 const server = createServer({
   port: process.env.PORT,
   JSONLimit: '150mb',
   enableCors: true,
 });
 
+// ─────────────────────────────────────────────
+// ENDPOINT DIRECTORIES
+// ─────────────────────────────────────────────
 const ENDPOINT_CONFIGS = [
-  {
-    path: './endpoints/onboarding/',
-  },
+  { path: './endpoints/onboarding/' },
+  { path: './endpoints/payment-instructions/' },
 ];
 
+// ─────────────────────────────────────────────
+// LOG ENDPOINT METADATA (OPTIONAL)
+// ─────────────────────────────────────────────
 function logEndpointMetaData(endpointConfigs) {
   const endpointData = [];
   const storageDirName = './endpoint-data';
@@ -34,7 +45,6 @@ function logEndpointMetaData(endpointConfigs) {
 
   endpointConfigs.forEach((endpointConfig) => {
     const { path: basePath, options } = endpointConfig;
-
     const dirs = fs.readdirSync(basePath);
 
     dirs.forEach((file) => {
@@ -59,15 +69,20 @@ function logEndpointMetaData(endpointConfigs) {
     fs.mkdirSync(storageDirName);
   }
 
-  fs.writeFileSync(`${storageDirName}/endpoints.json`, JSON.stringify(endpointData, null, 2), {
-    encoding: 'utf-8',
-  });
+  fs.writeFileSync(
+    `${storageDirName}/endpoints.json`,
+    JSON.stringify(endpointData, null, 2),
+    { encoding: 'utf-8' },
+  );
 }
 
 if (canLogEndpointInformation) {
   logEndpointMetaData(ENDPOINT_CONFIGS);
 }
 
+// ─────────────────────────────────────────────
+// REGISTER ENDPOINT HANDLERS
+// ─────────────────────────────────────────────
 function setupEndpointHandlers(basePath, options = {}) {
   const dirs = fs.readdirSync(basePath);
 
@@ -83,7 +98,10 @@ function setupEndpointHandlers(basePath, options = {}) {
 }
 
 ENDPOINT_CONFIGS.forEach((config) => {
-  setupEndpointHandlers(config.path, config.options);
+  setupEndpointHandlers(config.path, config.options || {});
 });
 
+// ─────────────────────────────────────────────
+// START SERVER
+// ─────────────────────────────────────────────
 server.startServer();

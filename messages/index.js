@@ -1,3 +1,5 @@
-const AuthenticationMessages = require('./authentication');
-
-module.exports = { AuthenticationMessages };
+module.exports = {
+  ...require('./authentication'),
+  ...require('./identity-management'),
+  PaymentMessages: require('./payment'),
+};

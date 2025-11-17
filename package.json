@@ -43,7 +43,7 @@
     "@app/workers": "file:workers",
     "@aws-sdk/client-secrets-manager": "^3.873.0",
     "axios": "^1.7.2",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.3",
     "bull": "^4.16.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
