@@ -9,10 +9,12 @@
     "url": "profold-be-api-1"
   },
   "scripts": {
-    "test": "set USE_MOCK_MODEL=1 && mocha --recursive --require dotenv/config",
-    "prepare": "husky",
-    "commitlint": "commitlint --edit",
-    "sync-envs": "node sync-env-files"
+  "start": "node bootstrap.js",
+  "test": "set USE_MOCK_MODEL=1 && mocha --recursive --require dotenv/config",
+  "prepare": "husky",
+  "commitlint": "commitlint --edit",
+  "sync-envs": "node sync-env-files"
+
   },
   "keywords": [],
   "author": "Resilience17",
